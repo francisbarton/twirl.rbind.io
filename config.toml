@@ -2,6 +2,7 @@ baseurl = "/"
 languageCode = "en-us"
 title = "This Week in R Learning (#twirl)"
 theme = "min_night"
+# theme = "hyde"
 googleAnalytics = ""
 disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
@@ -21,12 +22,24 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [params]
     description = "A learning blog"
-
+    
+    font = "Mina"
+    font = "Hasklig"
+    
+    # accent = "#0076a3" # "allports"
+    # accent = "#5c5d75" # "comet"
+    accent = "#354e8c" # "chambray"
+    
+    layoutReverse = true
+    themeColor = "theme-base-0e"
+    
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.12.0"
     highlightjsCDN = "//cdnjs.cloudflare.com/ajax/libs"
     highlightjsLang = ["r", "yaml"]
-    highlightjsTheme = "github"
+    # highlightjsTheme = "gruvbox-dark"
+    # highlightjsTheme = "atom-one-dark"
+    highlightjsTheme = "tomorrow-night-eighties"
 
     MathJaxCDN = "//cdnjs.cloudflare.com/ajax/libs"
     MathJaxVersion = "2.7.5"
