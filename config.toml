@@ -1,7 +1,7 @@
 baseurl = "/"
 languageCode = "en-us"
 title = "This Week in R Learning (#twirl)"
-theme = "min_night"
+theme = "hyde"
 # theme = "hyde"
 googleAnalytics = ""
 disqusShortname = ""
