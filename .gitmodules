@@ -4,6 +4,9 @@
 [submodule "themes/noteworthy"]
 	path = themes/noteworthy
 	url = https://github.com/kimcc/hugo-theme-noteworthy.git
+[submodule "themes/hugo-lithium"]
+	path = themes/hugo-lithium
+	url = https://github.com/yihui/hugo-lithium.git
 [submodule "themes/hyde"]
 	path = themes/hyde
 	url = https://github.com/spf13/hyde.git
