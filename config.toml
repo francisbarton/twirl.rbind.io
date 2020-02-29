@@ -23,8 +23,9 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 [params]
     description = "A learning blog"
     
-    font = "Mina"
-    font = "Hasklig"
+    # font = "Mina"
+    # font = "Noto Serif"
+    font = "Merriweather"
     
     # accent = "#0076a3" # "allports"
     # accent = "#5c5d75" # "comet"
