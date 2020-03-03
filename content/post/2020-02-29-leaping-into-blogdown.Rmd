@@ -11,5 +11,153 @@ menu: main
 
 A leetle teeny blog post to celebrate the 29th of February.
 
+I come across a simple [question from Stewart Lee](http://disq.us/p/1xd08nn) (presumably not [that one](https://www.stewartlee.co.uk/))
+
+> I have a numeric column and want to filter all number ending with (.999).
+> Tried a couple of tricks and failed. Any suggestion?
+
+So I open a new RMarkdown document, press <kbd>Ctrl</kbd> <kbd>Alt</kbd> and <kbd>'</kbd>
+(my RStudio shortcut to insert a new `R` chunk)
+and start work... This'll be easy, I think. This won't take long, I feel sure.
+
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+options(pillar.sigfig = 6)
+
+# a misc. list of numbers just to test out my code against different targets
+df <- tibble(
+  nums = c(0.995, 5.996, 9.99, 11.997, 19.9990, 99.999)
+)
+df %>% 
+  filter(nums - floor(nums) == 0.999)
+```
+
+Nope. Maybe it's confused about exactly what's the LHS of the filter; let's use `{}` to clarify:
+
+```{r}
+df %>% 
+  filter({nums - floor(nums)} == 0.999)
+```
+
+Nope. Maybe it doesn't like using the column name (`nums`) twice? Let's write a little function:
 
 
+```{r}
+return_partial <- function(n) {
+  n - floor(n)
+}
+
+df %>% 
+  filter(return_partial(nums) == 0.999)
+```
+
+Nope. Maybe filter can't cope with having a function like that passed to it, so let's add in a `mutate()` step and filter on a simple column of target numbers:
+
+```{r}
+df %>% 
+  mutate(partial = return_partial(nums)) %>% 
+  filter(partial == 0.999) %>% 
+  select(-partial)
+```
+
+Nope. Hold on, let's just check if it's something to do with `==` - what if I try filtering with `>=` instead:
+
+```{r}
+df %>%
+  dplyr::mutate(partial = nums - floor(nums)) %>%
+  dplyr::filter(partial >= 0.995)
+```
+
+Hmmm, ok that works! So it's not a problem with how I'm using `dplyr`, it's something to do with `==`. I can drop all the faffing about with `mutate()` and special functions now (though I might keep using `return_partial` for neatness' sake for now).
+
+I remember, dimly, reading something about how `R` doesn't always treat things as equal that you or I would think of as equal. Like when numbers are stored as different types, for example. I check that all the numbers I am try to check for equality are properly of the class `numeric` - they should all be "double"s as they are not integers.
+
+Can't see anything wrong with the way the numbers are stored.
+
+A bit more searching turns up a few pages referrring to avoiding `==` as a test of equality. [This one][ident] tells me that I am nearly there! I just need to use `identical` instead of `==`!
+
+`identical()` takes two R objects as arguments and compares them
+
+> A call to `identical` is the way to test exact equality in `if` and `while` statements, as well as in logical expressions that use `&&` or `||`. In all these applications you need to be assured of getting a single logical value.
+> 
+> Users often use the comparison operators, such as `==` or `!=`, in these situations. It looks natural, but it is not what these operators are designed to do in R.
+> - [Test Objects for Exact Equality][ident]
+
+OK! Let's go!
+
+```{r}
+df %>% 
+  filter(identical(return_partial(nums), 0.999))
+
+identical(df$nums, 99.999)
+
+```
+
+Oh. \*strokes beard for a while...\*
+
+OK maybe `identical` doesn't like being passed a vector like `nums` - maybe I need to vectorise it. (I looked into this and tried making [a vectorised version][vectorise] but it didn't make any difference.)
+
+
+```{r}
+
+vident <- Vectorize(FUN = identical, vectorize.args = "x")
+dplyr::filter(df, vident(x = return_partial(nums), y = 0.999))
+
+
+# then using map to pass through the vector
+library(purrr)
+
+map(return_partial(df$nums), ~ identical(., 0.999))
+map_lgl(return_partial(df$nums), ~ identical(., 0.999))
+df$nums %>% map_lgl(., ~ identical(., 0.999))
+
+# that is still not working, so...
+# ... testing passing a greater than/equal to:
+df %>% 
+  dplyr::filter(map_lgl(nums, ~ `>=`(return_partial(.), 0.997)))
+```
+
+The three examples below finally made it crystal clear that this was never going to work:
+
+```{r}
+# weird that this _doesn't_ match `11.997` but whatever...
+df$nums %>%
+  return_partial %>% 
+  map_lgl(., ~ `>=` (., 0.997))
+  
+df$nums %>%
+  return_partial %>% 
+  map_lgl(., ~ `==` (., 0.999))
+
+df$nums %>%
+  return_partial %>% 
+  map_lgl(., ~ identical(., as.double(0.999)))
+
+```
+
+Neither `==` and `identical()` were working - but there had to be a way to do this simple thing! More DuckDuckGoing was required... and of course StackOverflow came to the rescue (I'd looked there already but hadn't used search terms with sufficient ferocity, tenacity and gimlet-eyed intent).
+
+![Help me, Stack Overflow, you're my only hope!][images/help_me_so.jpg]
+
+Et, voilà! [A classic computing problem][so-fp] (see thread, links and duplicates) that, if I had once been aware of, I had forgotten about.
+
+[A great guide to floating-point computing][http://floating-point-gui.de/basic/].
+
+The R lot have got [solutions][all-equal] for this, of course... and I was delighted to find that the tidyverse has got [its own wrapper/implementation: `near()`][tidy-near] for `identical()`. (Of course it has!)
+
+So now suddenly, despite all the previous circumambulation, the solution to Stewart's question became rather simple indeed:
+
+```{r}
+df %>% 
+  filter(near(nums - floor(nums), 0.999))
+```
+
+
+Then I do <kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>K</kbd> to knit this document and see what it looks like.
+
+
+[vectorise]: https://web.archive.org/web/20190616204925/https://www.jimhester.com/2018/04/12/vectorize/
+[ident]: https://stat.ethz.ch/R-manual/R-devel/library/base/html/identical.html
+[so-fp]: https://stackoverflow.com/questions/9508518/why-are-these-numbers-not-equal
+[all-equal]: https://stat.ethz.ch/R-manual/R-devel/library/base/html/all.equal.html
+[tidy-near]: https://dplyr.tidyverse.org/reference/near.html
