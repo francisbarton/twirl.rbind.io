@@ -1,6 +1,6 @@
 ---
 date: 2020-02-29
-title: About \#twirl
+title: About #twirl
 ---
 
 My name is Francis and I'm a 43 year old man living in Stroud in England.
