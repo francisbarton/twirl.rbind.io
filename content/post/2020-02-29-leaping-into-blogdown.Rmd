@@ -137,7 +137,7 @@ df$nums %>%
 
 Neither `==` and `identical()` were working - but there had to be a way to do this simple thing! More DuckDuckGoing was required... and of course StackOverflow came to the rescue (I'd looked there already but hadn't used search terms with sufficient ferocity, tenacity and gimlet-eyed intent).
 
-![Help me, Stack Overflow, you're my only hope!][images/help_me_so.jpg]
+![Help me, Stack Overflow, you're my only hope!](/images/help_me_so.jpg)
 
 Et, voilà! [A classic computing problem][so-fp] (see thread, links and duplicates) that, if I had once been aware of, I had forgotten about.
 

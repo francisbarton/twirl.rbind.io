@@ -2,7 +2,6 @@ baseurl = "/"
 languageCode = "en-us"
 title = "This Week in R Learning (#twirl)"
 theme = "hyde"
-# theme = "hyde"
 googleAnalytics = ""
 disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
@@ -35,9 +34,9 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     themeColor = "theme-base-0e"
     
     # options for highlight.js (version, additional languages, and theme)
-    highlightjsVersion = "9.12.0"
-    highlightjsCDN = "//cdnjs.cloudflare.com/ajax/libs"
-    highlightjsLang = ["r", "yaml"]
+    # highlightjsVersion = "9.12.0"
+    # highlightjsCDN = "//cdnjs.cloudflare.com/ajax/libs"
+    # highlightjsLang = ["r", "yaml"]
     # highlightjsTheme = "gruvbox-dark"
     # highlightjsTheme = "atom-one-dark"
     highlightjsTheme = "tomorrow-night-eighties"
