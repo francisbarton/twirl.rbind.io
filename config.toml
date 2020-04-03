@@ -30,6 +30,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     # accent = "#5c5d75" # "comet"
     accent = "#354e8c" # "chambray"
     
+    customCSS = ["css/my_style.css"]
     layoutReverse = true
     themeColor = "theme-base-0e"
     
