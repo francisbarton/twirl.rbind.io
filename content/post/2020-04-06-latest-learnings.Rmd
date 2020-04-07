@@ -1,0 +1,119 @@
+---
+title: Latest learnings
+author: Francis Barton
+date: '2020-04-06'
+categories:
+  - '#twirl'
+slug: latest-learnings
+menu: main
+editor_options:
+  chunk_output_type: inline
+df_print: kable
+output:
+  html_document:
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+### This week in R I learned that ...
+
+Passing two vectors to `str_replace_all` as the `pattern` and `replacement` arguments does not work.
+Not even if you use `purrr::map2`.
+
+You have to pass them as a named list, where the pattern is the name and the replacement is the vector.
+
+Let's have a look...
+
+
+```{r}
+library(jsonlite)
+library(janitor)
+library(dplyr)
+library(stringr)
+library(purrr)
+
+# import LA - LAD - NUTS3 lookup table
+la_nuts_lookup_json <- "https://opendata.arcgis.com/datasets/9b4c94e915c844adb11e15a4b1e1294d_0.geojson"
+
+# get sample data
+
+la_nuts_lookup <- fromJSON(la_nuts_lookup_json) %>% 
+  pluck("features", "properties") %>% 
+  clean_names()
+
+df_sample <- la_nuts_lookup %>% 
+  select(1:2, 5:6) %>% 
+  dplyr::filter(str_detect(nuts318nm, "^(Bristol|Bath|Herefordshire|Kingston|Kensington|Glo|York)"))
+
+head(df_sample)
+
+
+nuts_patterns <- df_sample %>% 
+  pull(nuts318nm) %>% 
+  unique() %>% 
+  str_subset(., "^(Bristol|Kingston|Bath|Hereford|Kensington)")
+
+nuts_repl <- c("Herefordshire", "Bristol", "BANES/N Somerset/S Glos", "Kensington & Chelsea and H'smith & Fulham", "Kingston upon Hull")
+
+```
+
+```{r attempt1}
+
+df_sample %>% 
+  str_replace_all(nuts_patterns, nuts_repl)
+
+
+```
+
+This error message:
+
+> In `stri_replace_all_regex(string, pattern, fix_replacement(replacement)`,  :
+  longer object length is not a multiple of shorter object length
+  
+really confused me, because I was certain that my two vectors nuts_patterns and nuts_repl were the same length.
+
+```{r attempt2}
+
+df_sample %>% 
+  mutate_at(vars(nuts318nm), ~ str_replace_all(., nuts_patterns, nuts_repl))
+
+```
+
+It didn't even work with `map2`!:
+
+```{r attempt3}
+
+# df_sample %>% 
+  # mutate_at(vars(nuts318nm), ~ map2(nuts_patterns, nuts_repl, ~ str_replace_all(., .x, .y)))
+
+```
+
+Then a bit of searching led me to a post which mentioned [this in the stringr reference](https://stringr.tidyverse.org/reference/str_replace.html):
+
+
+```
+# If you want to apply multiple patterns and replacements to the same
+# string, pass a named vector to pattern.
+fruits %>%
+  str_c(collapse = "---") %>%
+  str_replace_all(c("one" = "1", "two" = "2", "three" = "3"))
+#> [1] "1 apple---2 pears---3 bananas"
+```
+
+Which meant I just had to do this:
+
+```{r}
+names(nuts_repl) <- nuts_patterns
+
+df_sample %>% 
+  mutate_at(vars(nuts318nm), ~ str_replace_all(., nuts_repl))
+```
+
+
+
+
+
