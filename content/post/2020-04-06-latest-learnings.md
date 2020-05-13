@@ -3,15 +3,12 @@ title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
 categories:
-  - 'twirl'
+  - twirl
+  - stringr
 slug: latest-learnings
-menu: main
-editor_options:
-  chunk_output_type: inline
-df_print: kable
 output:
   html_document:
-    keep_md: yes
+    keep_md: true
 ---
 
 
@@ -25,60 +22,6 @@ You have to pass them as a named list, where the pattern is the name and the rep
 
 Let's have a look...
 
-
-
-```r
-library(jsonlite)
-library(janitor)
-```
-
-```
-## 
-## Attaching package: 'janitor'
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     chisq.test, fisher.test
-```
-
-```r
-library(dplyr)
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
-library(stringr)
-library(purrr)
-```
-
-```
-## 
-## Attaching package: 'purrr'
-```
-
-```
-## The following object is masked from 'package:jsonlite':
-## 
-##     flatten
-```
 
 ```r
 # import LA - LAD - NUTS3 lookup table
