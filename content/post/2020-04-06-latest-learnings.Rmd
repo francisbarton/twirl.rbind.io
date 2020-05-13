@@ -1,5 +1,4 @@
 ---
-
 title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
@@ -11,7 +10,6 @@ slug: latest-learnings
 output:
   html_document:
     keep_md: true
-
 ---
 
 ```{r setup, include = FALSE}
