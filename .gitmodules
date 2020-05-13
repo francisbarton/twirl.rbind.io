@@ -7,3 +7,9 @@
 [submodule "themes/er"]
 	path = themes/er
 	url = git@github.com:lingxz/er.git
+[submodule "themes/tailwind-journal"]
+	path = themes/tailwind-journal
+	url = git@github.com:ianrodrigues/hugo-tailwind-journal.git
+[submodule "themes/archie"]
+	path = themes/archie
+	url = git@github.com:athul/archie.git
