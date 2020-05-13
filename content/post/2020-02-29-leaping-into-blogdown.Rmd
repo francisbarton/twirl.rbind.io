@@ -1,12 +1,17 @@
 ---
+
 title: Leaping into blogdown
-# author: ''
+author: Francis Barton
 date: '2020-02-29'
 slug: leaping-into-blogdown
+# description: ''
 # categories: []
 # tags: []
-# description: ''
 # menu: main
+output:
+  html_document:
+    keep_md: true
+
 ---
 
 A leetle teeny blog post to celebrate the 29th of February.

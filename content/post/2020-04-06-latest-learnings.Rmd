@@ -1,21 +1,27 @@
 ---
+
 title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
 categories:
-  - 'twirl'
+  - twirl
+  - stringr
 slug: latest-learnings
-menu: main
-editor_options:
-  chunk_output_type: inline
-df_print: kable
+# menu: main
 output:
   html_document:
-    keep_md: yes
+    keep_md: true
+
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, progress = FALSE, verbose = FALSE)
+
+library(dplyr)
+library(janitor)
+library(jsonlite)
+library(purrr)
+library(stringr)
 
 ```
 
@@ -28,13 +34,7 @@ You have to pass them as a named list, where the pattern is the name and the rep
 
 Let's have a look...
 
-
 ```{r}
-library(jsonlite)
-library(janitor)
-library(dplyr)
-library(stringr)
-library(purrr)
 
 # import LA - LAD - NUTS3 lookup table
 la_nuts_lookup_json <- "https://opendata.arcgis.com/datasets/9b4c94e915c844adb11e15a4b1e1294d_0.geojson"

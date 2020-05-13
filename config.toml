@@ -1,8 +1,8 @@
-baseurl = "/"
+baseurl = "https://twirl-rbind.netlify.app/"
 languageCode = "en-us"
 title = "#twirl (This Week in R Learning)"
 # theme = "hyde-fork"
-theme = "er"
+theme = "archie"
 googleAnalytics = ""
 disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
@@ -22,6 +22,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [params]
     description = "A learning blog"
+    subtitle = "A learning blog"
     
     # font = "Mina"
     # font = "Noto Serif"
@@ -40,7 +41,10 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     highlightjsVersion = "9.12.0"
     highlightjsCDN = "//cdn.bootcss.com"
     highlightjsLang = ["r", "yaml"]
-    highlightjsTheme = "github"
+    highlightjsTheme = "ocean"
+    # highlightjsTheme = "zenburn"
+    # highlightjsTheme = "hybrid"
+    # highlightjsTheme = "agate"
     # highlightjsTheme = "gruvbox-dark"
     # highlightjsTheme = "atom-one-dark"
     # highlightjsTheme = "tomorrow-night-eighties"
@@ -56,3 +60,61 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     width = 50
     height = 50
     alt = "site logo"
+
+    # Archie theme params
+    mode="auto" # color-mode → light,dark or auto
+	featherIconsCDN=true
+	subtitle = "Minimal and Clean [blog theme for Hugo](https://github.com/athul/archie)"
+
+#  Archie theme config
+
+# Code Highlight
+# pygmentsstyle = "monokai"
+pygmentsstyle = "paraiso-dark"
+pygmentscodefences = true
+pygmentscodefencesguesssyntax = true
+
+paginate=3 # articles per page
+
+[params]
+	
+
+# Social Tags
+
+[[params.social]]
+name = "GitHub"
+icon = "github"
+url = "https://github.com/athul/archie"
+
+[[params.social]]
+name = "Twitter"
+icon = "twitter"
+url = "https://github.com/athulcajay/"
+
+[[params.social]]
+name = "GitLab"
+icon = "gitlab"
+url = "https://gitlab.com/athul/"
+
+# Main menu Items
+
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "All posts"
+url = "/posts"
+weight = 2
+
+[[menu.main]]
+name = "About"
+url = "/about"
+weight = 3
+
+[[menu.main]]
+name = "Tags"
+url = "/tags"
+weight = 4
+```

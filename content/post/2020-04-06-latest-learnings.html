@@ -1,50 +1,40 @@
 ---
+
 title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
 categories:
-  - 'twirl'
+  - twirl
+  - stringr
 slug: latest-learnings
-menu: main
-editor_options:
-  chunk_output_type: inline
-df_print: kable
+# menu: main
 output:
   html_document:
-    keep_md: yes
+    keep_md: true
+
 ---
 
 
 
+<hr />
+<p>title: Latest learnings
+author: Francis Barton
+date: ‘2020-04-06’
+categories:
+- twirl
+- stringr
+slug: latest-learnings
+# menu: main
+output:
+html_document:
+keep_md: true</p>
+<hr />
 <div id="this-week-in-r-i-learned-that" class="section level3">
 <h3>This week in R I learned that …</h3>
 <p>Passing two vectors to <code>str_replace_all</code> as the <code>pattern</code> and <code>replacement</code> arguments does not work.
 Not even if you use <code>purrr::map2</code>.</p>
 <p>You have to pass them as a named list, where the pattern is the name and the replacement is the vector.</p>
 <p>Let’s have a look…</p>
-<pre class="r"><code>library(jsonlite)
-library(janitor)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;janitor&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     chisq.test, fisher.test</code></pre>
-<pre class="r"><code>library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(stringr)
-library(purrr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;purrr&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:jsonlite&#39;:
-## 
-##     flatten</code></pre>
 <pre class="r"><code># import LA - LAD - NUTS3 lookup table
 la_nuts_lookup_json &lt;- &quot;https://opendata.arcgis.com/datasets/9b4c94e915c844adb11e15a4b1e1294d_0.geojson&quot;
 
