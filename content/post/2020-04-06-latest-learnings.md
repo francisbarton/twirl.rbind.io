@@ -3,7 +3,7 @@ title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
 categories:
-  - '#twirl'
+  - 'twirl'
 slug: latest-learnings
 menu: main
 editor_options:
