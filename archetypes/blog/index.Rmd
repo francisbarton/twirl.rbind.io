@@ -1,0 +1,16 @@
+---
+title:
+author: Francis Barton
+date: 
+description:
+slug:
+tags:
+  - learning
+output: hugodown::md_document()
+highlight: espresso
+---
+
+```{r setup, echo = FALSE}
+suppressMessages(library(flair))
+```
+

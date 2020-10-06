@@ -1,0 +1,198 @@
+---
+title: My latest rabbithole
+date: '2020-10-03'
+slug: my-latest-rabbithole
+description: Some learning about R expressions and evaluation
+tags:
+  - learning
+  - tidyeval
+  - expressions
+---
+
+```{r setup, echo = FALSE}
+suppressMessages(library(flair))
+```
+
+It's strange how when you work intensely with `R`, you start learning all sorts of things, and this kind of spirals so that you're now wondering about bizarre experiments that pop into your head as soon as you wake up.
+
+I've been playing with a particular bit of procedure this morning, and as usual things were more complicated - or difficult for me, at least - than you think they're going to be.
+
+Having grappled for a while with the procedure, I started going down another one of my rabbit holes (I've had
+[a few][crc1]
+of those
+[recently][crc2]
+with `lubridate` and learning about dates and the Date format, then ending up revisiting core R concepts like `type` and `class` from a new perspective compared to when I first started learning).
+
+[crc1]: https://community.rstudio.com/t/unlist-converts-date-objects-back-to-numeric/83166
+[crc2]: https://community.rstudio.com/t/why-does-lubridate-as-period-return-h-m-s-for-whole-day-periods/83159
+
+Having dug around for a while, I realised I was venturing into a world of [expressions][adv-expr] and 
+[quasiquotation][adv-quasi] and
+[evaluation][adv-eval],
+which I had learned a bit about when exploring making functions to work with variables in tibbles.
+But I still don't really understand it properly, as my digging this morning confirmed.
+
+[adv-expr]: https://adv-r.hadley.nz/expressions.html
+[adv-quasi]: https://adv-r.hadley.nz/quasiquotation.html
+[adv-eval]: https://adv-r.hadley.nz/evaluation.html
+
+Then I realised that I actually have some time today to write up what I'm learning for *twirl*, rather than just leaving it all in a messy heap in my History pane.
+
+Here's my na[ï][bug]ve first attempt, just using some toy data:
+
+[bug]: https://github.com/rstudio/rstudio/issues/7954
+
+```{r}
+suppressMessages(library(magrittr))
+```
+
+
+```{r}
+c("peach", "pear", "plum") %>%
+  sample(3, replace = TRUE) %>%     # pick an item at random three times
+  replicate(3, .)                   # repeat the above three times
+```
+
+OK but this is suspicious: all three of the outputs are the same.
+This tells me that the sampling isn't being replicated:
+it's being done once and the result is being replicated three times.
+
+Somehow the `.` in the replicate function needs to be the _function_ above, not just its result.
+
+There's an easy way to achieve this, by forgetting about old René and his pipe, and just putting the whole thing into a single... single... I don't know, what do you call one of these things? A bracket nest? A turbracken?
+
+```{r}
+replicate(3, sample(c("peach", "pear", "plum"), 3, replace = TRUE))  
+```
+
+Job done.
+
+_Except_ that I think the option to pipe in a vector is useful, in theory at least, and I'd like to work out how to do that.
+There will be a way!
+
+I might also try to construct a generic function - weirdly it feels like that might be easier for using `tidyeval` than just the straight code??
+
+So, let's try again. 
+
+```{r orig, include = FALSE}
+c("peach", "pear", "plum") %>%
+  sample(3, replace = TRUE) %>%
+  replicate(3, .) # The . here means "expression"
+```
+```{r, echo = FALSE}
+flair::decorate_chunk("orig", eval = FALSE) %>% 
+  flair::flair(".", background = "plum1")
+```
+
+
+My approach to making things work in `R` is unashamedly trial-and-error.
+I just keep on trying things to see what they do, and tweaking until I get what I want.
+It's messy, and my R history gets very long, and littered with failed bits of code
+
+I get so _into_ this process that I never stop and think, "let's document this", and by the time I get near to a solution it feels a little bit fake to go back and document how I got there.
+This situation is not very different, and it does feel like this write-up is a rather sanitised version of my actual process.
+
+But hopefully it will help me learn better.
+
+So my challenge now is successfully to pass the first two lines of the chunk above _as an expression_ into the third line.
+
+First of all, I'll just check that the pipe between lines 1 and 2 is all fine, and that those lines can form a cohesive and stable expression:
+
+```{r}
+c("peach", "pear", "plum") %>%  # sample doesn't need a . 
+  sample(3, replace = TRUE)     # because x is the first argument
+
+# that should work the same as:
+sample(c("peach", "pear", "plum"), 3, replace = TRUE)
+```
+
+OK, now I'm going to look up how to capture an expression.
+The place to go is of course the ["Advanced R" book][adv-r], where we learn that:
+
+> code is data: you can capture code and compute on as you can with any other type of data. The first way you can capture code is with `rlang::expr()`.
+
+[adv-r]: https://adv-r.hadley.nz/meta-big-picture.html
+
+So let's try a blunt, naive approach to our problem:
+
+
+```{r}
+c("peach", "pear", "plum") %>%
+  sample(3, replace = TRUE) %>%
+  rlang::expr() %>%
+  replicate(3, .)
+```
+
+That didn't work - it clearly arrives in `expr()` as `.` so let's take it apart a bit:
+
+```{r}
+c("peach", "pear", "plum") %>%
+  sample(3, replace = TRUE) %>%
+  rlang::expr()
+```
+
+It seems like you can't pipe into `expr()` - the code has already been evaluated before it gets there rather than being captured in its prior state.
+What if we wrap `expr()` around the code, just to check?
+
+```{r}
+rlang::expr(
+  c("peach", "pear", "plum") %>%
+  sample(3, replace = TRUE)
+)
+```
+
+OK great, that works.
+I'm getting worried that I will need to learn some super-complicated fine technical details of R code in order to work out a way of doing this (if there even is one)!
+Can we at least pipe this into `replicate()`?
+
+```{r chunknametest}
+rlang::expr(
+  c("peach", "pear", "plum") %>%
+  sample(3, replace = TRUE)
+) %>% 
+  replicate(3, .)
+```
+
+Ha! D'oh!
+Of course we can, but of course `replicate` isn't going to evaluate the expression unless we tell it to.
+It'll just replicate the expression it's given.
+_Advanced R_ very simply and kindly [tells us][adv-eval] that all we need for evaluation is `eval()`, so let's do that:
+
+```{r}
+rlang::expr(
+  c("peach", "pear", "plum") %>%
+  sample(3, replace = TRUE)
+) %>% 
+  replicate(n = 3, expr = eval(.))
+```
+
+Great!
+But I don't think I am going to get round the issue of `expr()` not being pipeable-into.
+However, there might be another way of capturing those lines as an expression.
+I will keep reading.
+
+Compared to 
+
+
+
+
+
+
+---
+
+<br /><br />
+<br /><br />
+<br /><br />
+<br /><br />
+
+---
+
+PS Used Kelly Bodwin's
+[`flair`][flair]
+for the first time on this post.
+Ended up filing a minor feature request as a
+[github issue][flair-issue]
+on the project.
+
+[flair]: https://r-for-educators.github.io/flair/
+[flair-issue]: https://github.com/r-for-educators/flair/issues/26

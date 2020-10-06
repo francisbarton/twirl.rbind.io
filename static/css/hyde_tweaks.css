@@ -1,0 +1,427 @@
+// Modern CSS reset: https://github.com/hankchizljaw/modern-css-reset
+
+/* Box sizing rules */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+/* Remove default padding */
+
+ul[class],
+ol[class] {
+    padding: 0;
+}
+
+
+/* Remove default margin */
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+figure,
+blockquote,
+dl,
+dd {
+    margin: 0;
+}
+
+
+/* Set core root defaults */
+
+:root {
+    scroll-behavior: smooth;
+}
+
+
+/* Set core body defaults */
+
+body {
+    min-height: 100vh;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+}
+
+
+/* Remove list styles on ul, ol elements with a class attribute */
+
+ul[class],
+ol[class] {
+    list-style: none;
+}
+
+
+/* A elements that don't have a class get default styles */
+
+a:not([class]) {
+    text-decoration-skip-ink: auto;
+}
+
+
+/* Make images easier to work with */
+
+img,
+picture {
+    max-width: 100%;
+    display: block;
+}
+
+
+/* Natural flow and rhythm in articles by default */
+
+article>*+* {
+    margin-top: 2em;
+}
+
+
+/* Inherit fonts for inputs and buttons */
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+
+/* Blur images when they have no alt attribute */
+
+img:not([alt]) {
+    filter: blur(10px);
+}
+
+
+/* Remove all animations and transitions for people that prefer not to see them */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* end of Andy Bell's reset */
+
+
+/* https://utopia.fyi/blog/css-modular-scales */
+
+
+/* @link https://utopia.fyi/generator?c=320,15,1.2,1500,20,1.333,4,1, */
+
+:root {
+    --fluid-min-width: 320;
+    --fluid-max-width: 1500;
+    --fluid-min-size: 15;
+    --fluid-max-size: 20;
+    --fluid-min-ratio: 1.2;
+    --fluid-max-ratio: 1.333;
+    --fluid-screen: 100vw;
+    --fluid-bp: calc( (var(--fluid-screen) - ((var(--fluid-min-width) / 16) * 1rem)) / ((var(--fluid-max-width) / 16) - (var(--fluid-min-width) / 16)));
+}
+
+@media screen and (min-width: 1500px) {
+     :root {
+        --fluid-screen: calc(var(--fluid-max-width) * 1px);
+    }
+}
+
+:root {
+    --fluid-max-negative: (1 / var(--fluid-max-ratio) / var(--fluid-max-ratio));
+    --fluid-min-negative: (1 / var(--fluid-min-ratio) / var(--fluid-min-ratio));
+    --fluid-min-scale--1: var(--fluid-min-ratio) * var(--fluid-min-negative);
+    --fluid-max-scale--1: var(--fluid-max-ratio) * var(--fluid-max-negative);
+    --fluid-min-size--1: (var(--fluid-min-size) * var(--fluid-min-scale--1)) / 16;
+    --fluid-max-size--1: (var(--fluid-max-size) * var(--fluid-max-scale--1)) / 16;
+    --step--1: calc(((var(--fluid-min-size--1) * 1rem) + (var(--fluid-max-size--1) - var(--fluid-min-size--1)) * var(--fluid-bp)));
+    --fluid-min-scale-0: var(--fluid-min-ratio);
+    --fluid-max-scale-0: var(--fluid-max-ratio);
+    --fluid-min-size-0: (var(--fluid-min-size)) / 16;
+    --fluid-max-size-0: (var(--fluid-max-size)) / 16;
+    --step-0: calc(((var(--fluid-min-size-0) * 1rem) + (var(--fluid-max-size-0) - var(--fluid-min-size-0)) * var(--fluid-bp)));
+    --fluid-min-scale-1: var(--fluid-min-scale-0) * var(--fluid-min-ratio);
+    --fluid-max-scale-1: var(--fluid-max-scale-0) * var(--fluid-max-ratio);
+    --fluid-min-size-1: (var(--fluid-min-size) * var(--fluid-min-scale-0)) / 16;
+    --fluid-max-size-1: (var(--fluid-max-size) * var(--fluid-max-scale-0)) / 16;
+    --step-1: calc(((var(--fluid-min-size-1) * 1rem) + (var(--fluid-max-size-1) - var(--fluid-min-size-1)) * var(--fluid-bp)));
+    --fluid-min-scale-2: var(--fluid-min-scale-1) * var(--fluid-min-ratio);
+    --fluid-max-scale-2: var(--fluid-max-scale-1) * var(--fluid-max-ratio);
+    --fluid-min-size-2: (var(--fluid-min-size) * var(--fluid-min-scale-1)) / 16;
+    --fluid-max-size-2: (var(--fluid-max-size) * var(--fluid-max-scale-1)) / 16;
+    --step-2: calc(((var(--fluid-min-size-2) * 1rem) + (var(--fluid-max-size-2) - var(--fluid-min-size-2)) * var(--fluid-bp)));
+    --fluid-min-scale-3: var(--fluid-min-scale-2) * var(--fluid-min-ratio);
+    --fluid-max-scale-3: var(--fluid-max-scale-2) * var(--fluid-max-ratio);
+    --fluid-min-size-3: (var(--fluid-min-size) * var(--fluid-min-scale-2)) / 16;
+    --fluid-max-size-3: (var(--fluid-max-size) * var(--fluid-max-scale-2)) / 16;
+    --step-3: calc(((var(--fluid-min-size-3) * 1rem) + (var(--fluid-max-size-3) - var(--fluid-min-size-3)) * var(--fluid-bp)));
+    --fluid-min-scale-4: var(--fluid-min-scale-3) * var(--fluid-min-ratio);
+    --fluid-max-scale-4: var(--fluid-max-scale-3) * var(--fluid-max-ratio);
+    --fluid-min-size-4: (var(--fluid-min-size) * var(--fluid-min-scale-3)) / 16;
+    --fluid-max-size-4: (var(--fluid-max-size) * var(--fluid-max-scale-3)) / 16;
+    --step-4: calc(((var(--fluid-min-size-4) * 1rem) + (var(--fluid-max-size-4) - var(--fluid-min-size-4)) * var(--fluid-bp)));
+}
+
+:root {
+    --serif-list: "Merriweather", "Georgia", "IBM Plex Serif", "Lucida Grande", serif;
+    --sans-list: "Merriweather Sans", "IBM Plex Sans", "PT Sans", Ubuntu, Arial, sans-serif;
+    --mono-list: "Fira Code", "Inconsolata", "IBM Plex Mono", "SFMono-Regular", "Consolas", monospace;
+    font-family: var(--serif-list);
+    --base-text: #515151;
+    --page: #fcecff;
+    --headings: #513151;
+    --muted-text: #717171;
+    --shaded-background: #eecaee;
+    --emphasis: #915191;
+    --faded-white: rgba(255, 255, 255, .5);
+    --code-text: #ac12d7;
+    --code-bg: #e8dfe8;
+    --poole-grey: #9a9a9a;
+}
+
+body {
+    font-size: var(--step-0);
+    line-height: var(--step-0);
+    color: var(--base-text);
+    background-color: var(--page);
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+}
+
+code,
+pre {
+    font-family: var(--mono-list);
+}
+
+pre {
+    padding: 0;
+    border-radius: 5px;
+}
+
+code {
+    color: var(--code-text);
+    font-weight: 500;
+    background-color: var(--code-bg);
+}
+
+#main>*+* {
+    margin-top: var(--step-1);
+}
+
+p,
+li {
+    line-height: var(--step-1);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    line-height: 1.5em;
+    color: var(--headings);
+}
+
+h1,
+.post-title {
+    font-size: var(--step-4);
+    color: var(--headings);
+}
+
+h2 {
+    font-size: var(--step-3);
+}
+
+h3 {
+    font-size: var(--step-2);
+}
+
+h4 {
+    font-size: var(--step-1);
+}
+
+
+/* for posts list page */
+
+.posts .post-title {
+    font-size: var(--step-2);
+    color: var(--headings);
+}
+
+.posts .post-date {
+    font-size: var(--step-1);
+    color: var(--poole-grey);
+}
+
+a {
+    font-weight: 500;
+    padding: 1px;
+}
+
+.post-content a {
+    text-decoration: 2px solid underline;
+}
+
+a:focus {
+    outline: 2px dotted !important;
+    text-decoration: 3px solid underline;
+}
+
+a:hover {
+    text-decoration: 3px solid underline;
+}
+
+.more-posts {
+    color: var(--poole-grey);
+}
+
+hr {
+    border: none;
+    border-top: 3px double var(--base-text);
+    color: #333;
+    overflow: visible;
+    text-align: center;
+    height: 5px;
+}
+
+.contact hr {
+    border-top: 3px solid var(--faded-white);
+}
+
+strong {
+    color: var(--emphasis);
+}
+
+.caption {
+    font-size: var(--step--1);
+    font-style: italic;
+    color: var(--muted-text);
+    background-color: var(--shaded-background);
+    padding: 0.5em;
+    border: 1px solid var(--muted-text);
+}
+
+img {
+    margin-bottom: 0;
+}
+
+div.highlight,
+pre {
+    margin-bottom: 0;
+}
+
+.page-footer {
+    color: var(--muted-text);
+    margin-top: 2em;
+    font-size: var(--step--1);
+    font-style: italic;
+}
+
+///** Adapted from hyde.css from theme **///
+
+/*
+ * Sidebar
+ *
+ * Flexible banner for housing site name, intro, and "footer" content. Starts
+ * out above content in mobile and later moves to the side with wider viewports.
+ */
+
+.sidebar {
+    text-align: center;
+    padding: 2rem 2rem;
+    color: var(--faded-white);
+    background-color: #202020;
+}
+
+@media (min-width: 48em) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 18em;
+        text-align: left;
+    }
+}
+
+
+/* Sidebar links */
+
+.sidebar a {
+    color: var(--faded-white);
+    font-size: var(--step-1);
+    /* padding: 1em; */
+}
+
+
+/* About section */
+
+.site-title a {
+    color: #fff;
+    margin-top: 0;
+    text-align: right;
+    font-size: var(--step-3);
+    font-weight: 700;
+    margin-bottom: 1em;
+    display: block;
+}
+
+# site description .lead {
+    font-size: var(--step-2);
+    font-style: italic;
+}
+
+.u-photo {
+    margin: auto;
+    margin-bottom: 1rem;
+    border: 0;
+    border-radius: 0;
+    width: 215px;
+    height: 250px;
+    /* border: 2px solid white; */
+    /* border-radius: 50%; */
+}
+
+.contact-head {
+    color: #fff;
+    margin-bottom: 0;
+}
+
+
+/* Sidebar nav */
+
+.sidebar-nav,
+.contact-list {
+    list-style: none;
+    font-size: var(--step-1);
+    padding: 0.2em 0 0.2em 0;
+    margin: 1em 0 1em 0;
+}
+
+.sidebar-nav li {
+    display: block;
+    line-height: var(--step-2);
+}
+
+.sidebar-nav a {
+    padding: 0.2em 0 0.2em 0;
+    margin: 1em 0 1em 0;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a:focus {
+    text-decoration: 4px solid underline;
+}

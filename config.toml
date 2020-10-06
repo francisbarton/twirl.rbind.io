@@ -1,52 +1,94 @@
 baseurl = "https://twirl-rbind.netlify.app/"
-languageCode = "en-us"
-title = "#twirl (This Week in R Learning)"
-# theme = "hyde-fork"
-theme = "archie"
-googleAnalytics = ""
-disqusShortname = ""
-ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+languageCode = "en-gb"
+title = "#twirl"
+theme = "hyde-fork"
+# ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+ignoreFiles = ['\.Rmd$', '_files$', '_cache$', '\.knit\.md$', '\.utf8\.md$']
 
 [permalinks]
-    post = "/:year/:month/:day/:slug/"
+    post = "/:slug/"
+
+[author]
+    image = "images/twirl_hex_v2.png"
+    alt = "twirl hex logo"
+
+
+# main menu Items
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
 
 [[menu.main]]
-    name = "About Me"
-    url = "/about/"
+    name = "Posts"
+    url = "/posts"
+    weight = 2
+
 [[menu.main]]
+    name = "About"
+    url = "/about"
+    weight = 3
+
+# social/contact menu
+
+[[menu.contact]]
     name = "GitHub"
-    url = "https://github.com/francisbarton/twirl.rbind.io"
-[[menu.main]]
+    url = "https://github.com/francisbarton/"
+    icon = "github"
+    weight = 1
+
+[[menu.contact]]
     name = "Twitter"
     url = "https://twitter.com/ludictech"
+    icon = "twitter"
+    weight = 2
 
+# General site parameters
 [params]
-    description = "A learning blog"
-    subtitle = "A learning blog"
+    author = "Francis Barton"
+    subtitle = "Less-than-weekly learning notes"
+    description = "(This Week in R Learning)"
+
+    disable_mathjax = true
     
-    # font = "Mina"
-    # font = "Noto Serif"
-    # font = "Merriweather"
+    contactHeader = false
+
+    # twitterImage = ""
     
-    ## hyde options:
+    copyright = "CC0 1.0 Universal Licence"
+    footer = false
+    
+    # number of recent posts to display on front page
+    n_posts_front = 10
+    
+    layoutReverse = true
+    themeColor = "theme-base-0e"
+
     # accent = "#0076a3" # "allports"
     # accent = "#5c5d75" # "comet"
-    # accent = "#354e8c" # "chambray"
+    accent = "#354e8c" # "chambray"
     
-    # customCSS = ["css/my_style.css"]
-    # layoutReverse = true
-    # themeColor = "theme-base-0e"
+    # Custom CSS added to default styles. Files added to `static` folder is copied as it is to
+    # root by Hugo. For example if you have custom CSS file under `static/css/custom.css` then
+    # you can specify custom css path as `css/custom.css`.
+    customCSS = ["css/hyde_tweaks.css"]
     
+    # Custom list of Javascript files to load. Just like custom CSS you can place js files under
+    # `static/js` folder and specify path here as `js/script-name.js`. You can also specify full url,
+    # for example you may want to include external JS library.
+    # customJS = ["js/abc.js", "js/xyz.js", "https://code.jquery.com/jquery-3.4.1.js"]
+
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.12.0"
     highlightjsCDN = "//cdn.bootcss.com"
     highlightjsLang = ["r", "yaml"]
-    highlightjsTheme = "ocean"
+    
+    # highlightjsTheme = "ocean"
     # highlightjsTheme = "zenburn"
     # highlightjsTheme = "hybrid"
     # highlightjsTheme = "agate"
     # highlightjsTheme = "gruvbox-dark"
-    # highlightjsTheme = "atom-one-dark"
+    highlightjsTheme = "atom-one-dark"
     # highlightjsTheme = "tomorrow-night-eighties"
 
     # MathJaxCDN = "//cdn.bootcss.com"
@@ -55,62 +97,15 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     # path to the favicon, under "static"
     favicon = "favicon.ico"
 
-    [params.logo]
-    url = "logo.png"
+# also needs to live in "static"
+[params.logo]
+    url = "images/twirl_hex_v2.png"
     width = 50
     height = 50
-    alt = "site logo"
+    alt = "twirl hex logo"
 
-    # Archie theme params
-    mode="auto" # color-mode → light,dark or auto
-	featherIconsCDN=true
-	subtitle = "Minimal and Clean [blog theme for Hugo](https://github.com/athul/archie)"
-
-#  Archie theme config
-
-# Code Highlight
-# pygmentsstyle = "monokai"
-pygmentsstyle = "paraiso-dark"
-pygmentscodefences = true
-pygmentscodefencesguesssyntax = true
-
-paginate=3 # articles per page
-
-# Social Tags
-
-[[params.social]]
-name = "GitHub"
-icon = "github"
-url = "https://github.com/athul/archie"
-
-[[params.social]]
-name = "Twitter"
-icon = "twitter"
-url = "https://github.com/athulcajay/"
-
-[[params.social]]
-name = "GitLab"
-icon = "gitlab"
-url = "https://gitlab.com/athul/"
-
-# Main menu Items
-
-[[menu.main]]
-name = "Home"
-url = "/"
-weight = 1
-
-[[menu.main]]
-name = "All posts"
-url = "/posts"
-weight = 2
-
-[[menu.main]]
-name = "About"
-url = "/about"
-weight = 3
-
-[[menu.main]]
-name = "Tags"
-url = "/tags"
-weight = 4
+# for hugodown
+# [markup]
+#   defaultMarkdownHandler = "goldmark"
+#   [markup.goldmark.renderer]
+#     unsafe = true

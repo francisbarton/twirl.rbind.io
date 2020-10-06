@@ -2,23 +2,20 @@
 title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
-categories:
+tags:
   - stringr
-  - twirl
 slug: latest-learnings
-output:
-  html_document:
-    keep_md: yes
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
-<div id="this-week-in-r-i-learned-that" class="section level3">
-<h3>This week in R I learned that …</h3>
+<p>This week in R I learned that …</p>
 <p>Passing two vectors to <code>str_replace_all</code> as the <code>pattern</code> and <code>replacement</code> arguments does not work.
 Not even if you use <code>purrr::map2</code>.</p>
 <p>You have to pass them as a named list, where the pattern is the name and the replacement is the vector.</p>
-<p>Let’s have a look…</p>
+<p>Let’s have a look…
+<!--more--></p>
 <pre class="r"><code># import LA - LAD - NUTS3 lookup table
 la_nuts_lookup_json &lt;- &quot;https://opendata.arcgis.com/datasets/9b4c94e915c844adb11e15a4b1e1294d_0.geojson&quot;
 
@@ -70,7 +67,7 @@ nuts_repl &lt;- c(&quot;Herefordshire&quot;, &quot;Bristol&quot;, &quot;BANES/N 
 <p>In <code>stri_replace_all_regex(string, pattern, fix_replacement(replacement)</code>, :
 longer object length is not a multiple of shorter object length</p>
 </blockquote>
-<p>really confused me, because I was certain that my two vectors nuts_patterns and nuts_repl were the same length.</p>
+<p>really confused me, because I was certain that my two vectors <code>nuts_patterns</code> and <code>nuts_repl</code> were the same length.</p>
 <pre class="r"><code>df_sample %&gt;% 
   mutate_at(vars(nuts318nm), ~ str_replace_all(., nuts_patterns, nuts_repl))</code></pre>
 <pre><code>##      lad18cd                      lad18nm nuts318cd
@@ -109,7 +106,7 @@ longer object length is not a multiple of shorter object length</p>
 <pre class="r"><code># df_sample %&gt;% 
   # mutate_at(vars(nuts318nm), ~ map2(nuts_patterns, nuts_repl, ~ str_replace_all(., .x, .y)))</code></pre>
 <p>Then a bit of searching led me to a post which mentioned <a href="https://stringr.tidyverse.org/reference/str_replace.html">this in the stringr reference</a>:</p>
-<pre><code># If you want to apply multiple patterns and replacements to the same
+<pre class="r"><code># If you want to apply multiple patterns and replacements to the same
 # string, pass a named vector to pattern.
 fruits %&gt;%
   str_c(collapse = &quot;---&quot;) %&gt;%
@@ -152,4 +149,3 @@ df_sample %&gt;%
 ## 13 Kensington &amp; Chelsea and H&#39;smith &amp; Fulham
 ## 14                        Kingston upon Hull
 ## 15                                      York</code></pre>
-</div>

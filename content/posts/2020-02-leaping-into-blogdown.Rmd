@@ -3,13 +3,9 @@ title: Leaping into blogdown
 author: Francis Barton
 date: '2020-02-29'
 slug: leaping-into-blogdown
-# description: ''
-# categories: []
-# tags: []
-# menu: main
-output:
-  html_document:
-    keep_md: true
+tags:
+  - identical
+  - learning
 ---
 
 A leetle teeny blog post to celebrate the 29th of February.
@@ -22,6 +18,7 @@ I come across a simple [question from Stewart Lee](http://disq.us/p/1xd08nn) (pr
 So I open a new RMarkdown document, press <kbd>Ctrl</kbd> <kbd>Alt</kbd> and <kbd>'</kbd>
 (my RStudio shortcut to insert a new `R` chunk)
 and start work... This'll be easy, I think. This won't take long, I feel sure.
+<!--more-->
 
 ```{r}
 suppressPackageStartupMessages(library(dplyr))

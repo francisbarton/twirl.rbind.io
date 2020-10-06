@@ -2,13 +2,9 @@
 title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
-categories:
+tags:
   - stringr
-  - twirl
 slug: latest-learnings
-output:
-  html_document:
-    keep_md: yes
 ---
 
 ```{r setup, include = FALSE}
@@ -19,10 +15,9 @@ library(janitor)
 library(jsonlite)
 library(purrr)
 library(stringr)
-
 ```
 
-### This week in R I learned that ...
+This week in R I learned that ...
 
 Passing two vectors to `str_replace_all` as the `pattern` and `replacement` arguments does not work.
 Not even if you use `purrr::map2`.
@@ -30,6 +25,7 @@ Not even if you use `purrr::map2`.
 You have to pass them as a named list, where the pattern is the name and the replacement is the vector.
 
 Let's have a look...
+<!--more-->
 
 ```{r}
 
@@ -48,7 +44,6 @@ df_sample <- la_nuts_lookup %>%
 
 head(df_sample)
 
-
 nuts_patterns <- df_sample %>% 
   pull(nuts318nm) %>% 
   unique() %>% 
@@ -59,11 +54,8 @@ nuts_repl <- c("Herefordshire", "Bristol", "BANES/N Somerset/S Glos", "Kensingto
 ```
 
 ```{r attempt1}
-
 df_sample %>% 
   str_replace_all(nuts_patterns, nuts_repl)
-
-
 ```
 
 This error message:
@@ -71,28 +63,23 @@ This error message:
 > In `stri_replace_all_regex(string, pattern, fix_replacement(replacement)`,  :
   longer object length is not a multiple of shorter object length
   
-really confused me, because I was certain that my two vectors nuts_patterns and nuts_repl were the same length.
+really confused me, because I was certain that my two vectors `nuts_patterns` and `nuts_repl` were the same length.
 
 ```{r attempt2}
-
 df_sample %>% 
   mutate_at(vars(nuts318nm), ~ str_replace_all(., nuts_patterns, nuts_repl))
-
 ```
 
 It didn't even work with `map2`!:
 
 ```{r attempt3}
-
 # df_sample %>% 
   # mutate_at(vars(nuts318nm), ~ map2(nuts_patterns, nuts_repl, ~ str_replace_all(., .x, .y)))
-
 ```
 
 Then a bit of searching led me to a post which mentioned [this in the stringr reference](https://stringr.tidyverse.org/reference/str_replace.html):
 
-
-```
+```{r, eval = FALSE}
 # If you want to apply multiple patterns and replacements to the same
 # string, pass a named vector to pattern.
 fruits %>%

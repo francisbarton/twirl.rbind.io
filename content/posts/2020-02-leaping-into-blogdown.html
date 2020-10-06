@@ -3,15 +3,12 @@ title: Leaping into blogdown
 author: Francis Barton
 date: '2020-02-29'
 slug: leaping-into-blogdown
-# description: ''
-# categories: []
-# tags: []
-# menu: main
-output:
-  html_document:
-    keep_md: true
+tags:
+  - identical
+  - learning
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>A leetle teeny blog post to celebrate the 29th of February.</p>
@@ -22,7 +19,8 @@ Tried a couple of tricks and failed. Any suggestion?</p>
 </blockquote>
 <p>So I open a new RMarkdown document, press <kbd>Ctrl</kbd> <kbd>Alt</kbd> and <kbd>’</kbd>
 (my RStudio shortcut to insert a new <code>R</code> chunk)
-and start work… This’ll be easy, I think. This won’t take long, I feel sure.</p>
+and start work… This’ll be easy, I think. This won’t take long, I feel sure.
+<!--more--></p>
 <pre class="r"><code>suppressPackageStartupMessages(library(dplyr))
 options(pillar.sigfig = 6)
 
@@ -140,7 +138,7 @@ df$nums %&gt;%
 <pre><code>## [1] FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
 <p>Neither <code>==</code> and <code>identical()</code> were working - but there had to be a way to do this simple thing! More DuckDuckGoing was required… and of course StackOverflow came to the rescue (I’d looked there already but hadn’t used search terms with sufficient ferocity, tenacity and gimlet-eyed intent).</p>
 <div class="figure">
-<img src="/images/help_me_so.jpg" alt="Help me, Stack Overflow, you’re my only hope!" />
+<img src="/images/help_me_so.jpg" alt="" />
 <p class="caption">Help me, Stack Overflow, you’re my only hope!</p>
 </div>
 <p>Et, voilà! <a href="https://stackoverflow.com/questions/9508518/why-are-these-numbers-not-equal">A classic computing problem</a> (see thread, links and duplicates) that, if I had once been aware of, I had forgotten about.</p>

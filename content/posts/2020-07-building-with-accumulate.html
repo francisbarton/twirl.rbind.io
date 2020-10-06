@@ -1,0 +1,297 @@
+---
+title: 'My latest problem: building a list with accumulate'
+author: Francis Barton
+date: '2020-07-05'
+slug: building-with-accumulate
+tags:
+  - purrr
+  - learning
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="another-r-learning-curve" class="section level3">
+<h3>Another R learning curve</h3>
+<p>I just realised that yet another job I thought would be simple for me to do in R, turns out to be quite the learning curve.
+<!--more--></p>
+<p>Here’s the challenge - and I get that it seems simple, and I feel dim for not immediately knowing how to do it:</p>
+<ul>
+<li>starting with a “seed” <code>x</code> (could be a number, string, data frame), apply a function f(x) to return <code>y</code>.</li>
+<li>Now add <code>y</code> to a vector or list such that you get <code>list(x, y)</code></li>
+<li>Now run <code>f()</code> on <code>y</code> to return <code>z</code> and add that to the list - so the list is growing incrementally through the repeated application of <code>f(x)</code></li>
+<li>Stop growing the list at some limit (list length, value of <code>x</code>, whatever) and complete, returning the whole list.</li>
+</ul>
+<p>I got really stuck doing this on a more complicated project, so I thought, “let’s work this out using a really simple example until I understand what to do.”</p>
+<p>I have a feeling that <code>purrr::accumulate</code> is something that might be useful?
+But I have not yet succeeded in making that work for anything.
+Perhaps it is a sledgehammer to crack a nut.
+Let’s see if I can get my head around what’s needed - the basic structure of the task.</p>
+</div>
+<div id="attempt-1" class="section level3">
+<h3>Attempt 1</h3>
+<p>So I started off with a little function:</p>
+<pre class="r"><code>square_it &lt;- function(x) {
+  y &lt;- x^2
+  
+  out &lt;- list(x, y)
+
+  # trying to do a recursive thing
+  if (y &lt; 1e5) {
+    square_it(y)
+  }
+  else {
+    return(out)
+  }
+}
+
+squares &lt;- square_it(2)
+squares</code></pre>
+<pre><code>## [[1]]
+## [1] 65536
+## 
+## [[2]]
+## [1] 4294967296</code></pre>
+<p>Hmm, OK, so that sort of worked.
+It did the recursive thing and stopped (roughly) when I expected it to.
+It returns the last two numbers x and y, not the whole list.
+This is where I think I need <code>purrr::accumulate</code>?</p>
+<p>But first I have a few tweaks to try.</p>
+</div>
+<div id="attempt-2" class="section level3">
+<h3>Attempt 2</h3>
+<pre class="r"><code>square_it &lt;- function(x) {
+  y &lt;- x^2
+  c(x, y)
+
+  # recursion!
+  while (y &lt; 1e4) {
+    square_it(y)
+  }
+}
+
+# don&#39;t run!
+# square_it(2)</code></pre>
+<p>Hmmm, that <em>didn’t</em> work.
+It went off on one and needed me to manually break it.</p>
+<p>While I think of it, it might be worth me just reminding myself of something similar that I <em>do</em> know how to do:
+a linear progression along a vector using <code>purrr::map</code></p>
+<pre class="r"><code>library(dplyr, warn.conflicts = FALSE)
+library(purrr)
+
+raise_it &lt;- function(n, x) {
+  `^`(x, n)
+}
+
+# 1:6 %&gt;% 
+#   map_int( ~ raise_it(., 2)) # oops, weird
+
+1:6 %&gt;% 
+  map_dbl( ~ raise_it(., 2))</code></pre>
+<pre><code>## [1]  2  4  8 16 32 64</code></pre>
+<p>If I know the vector to map along, then it’s fine.
+Where I’m stuck is where the vector/list gets built by the function as we go.
+It feels a bit like this:</p>
+<div style="width:100%;height:0;padding-bottom:80%;position:relative;">
+<iframe src="https://giphy.com/embed/3oz8xxYqZDkPLfH7yM" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+</div>
+<p>
+<a href="https://giphy.com/gifs/aardman-wallace-and-gromit-train-chase-feathers-mcgraw-3oz8xxYqZDkPLfH7yM">The classic Gromit and Feathers on the train scene</a>
+</p>
+<p>One of the confusions/uncertainties I am trying to get my head around is what needs to be <em>inside</em> the function and what can sit outside, like making or manipulating the vector/list, accumulating or mapping the function, and so on.
+OK, so if I found someone else with this problem, what would I advise them to do?
+I’d say start small and simple.
+Write a minimal function that works.
+Then use it for something small.
+Go from there.
+Backtrack when it breaks.</p>
+</div>
+<div id="attempt-3" class="section level3">
+<h3>Attempt 3</h3>
+<pre class="r"><code>square_it &lt;- function(x) {
+  y &lt;- x^2
+  return(c(x, y))
+}
+
+square_it(2)</code></pre>
+<pre><code>## [1] 2 4</code></pre>
+<pre class="r"><code># ok that works
+
+square_it &lt;- function(x) {
+  y &lt;- tail(x)^2
+  return(c(x, y))
+}
+
+square_it(2)</code></pre>
+<pre><code>## [1] 2 4</code></pre>
+<pre class="r"><code>square_it(square_it(2))</code></pre>
+<pre><code>## [1]  2  4  4 16</code></pre>
+<pre class="r"><code># hmmm weird was not expecting length == 4
+square_it(c(2, 4)) # check</code></pre>
+<pre><code>## [1]  2  4  4 16</code></pre>
+<pre class="r"><code># aha/d&#39;oh!
+
+square_it &lt;- function(x) {
+  y &lt;- tail(x, 1)^2
+  return(c(x, y))
+}
+
+square_it(2)</code></pre>
+<pre><code>## [1] 2 4</code></pre>
+<pre class="r"><code>square_it(square_it(2))</code></pre>
+<pre><code>## [1]  2  4 16</code></pre>
+<pre class="r"><code>square_it &lt;- function(x) {
+  y &lt;- tail(x, 1)^2
+  z &lt;- c(x, y)
+  return(z)
+  
+  while (y &lt; 1e6) {
+    square_it(z)
+  }
+}
+
+# nope
+# square_it(2)
+
+
+square_it &lt;- function(x) {
+  y &lt;- tail(x, 1)^2
+  z &lt;- c(x, y)
+  
+  while (y &lt; 1e6) {
+    square_it(z)
+  }
+  
+  return(z)
+}
+
+# still doesn&#39;t work
+# square_it(2)
+
+
+square_it &lt;- function(x) {
+  y &lt;- tail(x, 1)^2
+  c(x, y)
+}
+
+l &lt;- square_it(2)
+l &lt;- c(l, square_it(l))
+l # not quite</code></pre>
+<pre><code>## [1]  2  4  2  4 16</code></pre>
+<pre class="r"><code># try again
+l &lt;- square_it(2)
+l &lt;- square_it(l)
+l</code></pre>
+<pre><code>## [1]  2  4 16</code></pre>
+<pre class="r"><code># see, this works but I can&#39;t work out how to formularise it!!!
+# it must be something very easy!
+l &lt;- square_it(2)
+l &lt;- square_it(l)
+l &lt;- square_it(l)
+l &lt;- square_it(l)
+l</code></pre>
+<pre><code>## [1]     2     4    16   256 65536</code></pre>
+<pre class="r"><code>l &lt;- square_it(2)
+while (tail(l, 1) &lt; 1e7) {
+  l &lt;- square_it(l)
+}
+l</code></pre>
+<pre><code>## [1]          2          4         16        256      65536 4294967296</code></pre>
+<p>At last it worked!</p>
+<p>Now can I rewrite it to use a list rather than a vector (useful for my actual project)?</p>
+<pre class="r"><code>square_it &lt;- function(x) {
+  y &lt;- dplyr::last(x)^2
+  list(x, y)
+}
+
+
+l &lt;- 2
+while (dplyr::last(l) &lt; 1e7) {
+  l &lt;- square_it(l)
+}
+l</code></pre>
+<pre><code>## [[1]]
+## [[1]][[1]]
+## [[1]][[1]][[1]]
+## [[1]][[1]][[1]][[1]]
+## [[1]][[1]][[1]][[1]][[1]]
+## [1] 2
+## 
+## [[1]][[1]][[1]][[1]][[2]]
+## [1] 4
+## 
+## 
+## [[1]][[1]][[1]][[2]]
+## [1] 16
+## 
+## 
+## [[1]][[1]][[2]]
+## [1] 256
+## 
+## 
+## [[1]][[2]]
+## [1] 65536
+## 
+## 
+## [[2]]
+## [1] 4294967296</code></pre>
+<p>Oooh. Mmmm. Interesting.</p>
+<pre class="r"><code># need to `flatten` the list each time
+square_it &lt;- function(x) {
+  y &lt;- dplyr::last(x)^2
+  list(x, y) %&gt;% 
+    purrr::flatten()
+}
+
+# now this works beautfully
+l &lt;- 2
+while (dplyr::last(l) &lt; 1e7) {
+  l &lt;- square_it(l)
+}
+l</code></pre>
+<pre><code>## [[1]]
+## [1] 2
+## 
+## [[2]]
+## [1] 4
+## 
+## [[3]]
+## [1] 16
+## 
+## [[4]]
+## [1] 256
+## 
+## [[5]]
+## [1] 65536
+## 
+## [[6]]
+## [1] 4294967296</code></pre>
+<pre class="r"><code># and now as a control function???
+build_squares &lt;- function(x) {
+  while (dplyr::last(x) &lt; 1e7) {
+    x &lt;- square_it(x)
+  }
+  return(x)
+}
+
+squares &lt;- build_squares(2)
+squares</code></pre>
+<pre><code>## [[1]]
+## [1] 2
+## 
+## [[2]]
+## [1] 4
+## 
+## [[3]]
+## [1] 16
+## 
+## [[4]]
+## [1] 256
+## 
+## [[5]]
+## [1] 65536
+## 
+## [[6]]
+## [1] 4294967296</code></pre>
+</div>
