@@ -1,0 +1,147 @@
+---
+title: My latest rabbithole
+date: '2020-10-03'
+slug: my-latest-rabbithole
+description: Some learning about R expressions and evaluation
+categories: posts
+tags:
+  - learning
+  - tidyeval
+  - expressions
+  - flair
+  - rlang
+---
+
+<script src="index_files/header-attrs/header-attrs.js"></script>
+<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<p>It’s strange how when you work intensely with <code>R</code>, you start learning all sorts of things, and this kind of spirals so that you’re now wondering about bizarre experiments that pop into your head as soon as you wake up.</p>
+<p>I’ve been playing with a particular bit of procedure this morning, and as usual things were more complicated - or difficult for me, at least - than you think they’re going to be.</p>
+<p>Having grappled for a while with the procedure, I started going down another one of my rabbit holes (I’ve had
+<a href="https://community.rstudio.com/t/unlist-converts-date-objects-back-to-numeric/83166">a few</a>
+of those
+<a href="https://community.rstudio.com/t/why-does-lubridate-as-period-return-h-m-s-for-whole-day-periods/83159">recently</a>
+with <code>lubridate</code> and learning about dates and the Date format, then ending up revisiting core R concepts like <code>type</code> and <code>class</code> from a new perspective compared to when I first started learning).</p>
+<p>Having dug around for a while, I realised I was venturing into a world of <a href="https://adv-r.hadley.nz/expressions.html">expressions</a> and
+<a href="https://adv-r.hadley.nz/quasiquotation.html">quasiquotation</a> and
+<a href="https://adv-r.hadley.nz/evaluation.html">evaluation</a>,
+which I had learned a bit about when exploring making functions to work with variables in tibbles.
+But I still don’t really understand it properly, as my digging this morning confirmed.</p>
+<p>Then I realised that I actually have some time today to write up what I’m learning for <em>twirl</em>, rather than just leaving it all in a messy heap in my History pane.</p>
+<p>Here’s my na<a href="https://github.com/rstudio/rstudio/issues/7954">ï</a>ve first attempt, just using some toy data:</p>
+<pre class="r"><code>suppressMessages(library(magrittr))</code></pre>
+<pre class="r"><code>c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;%
+  sample(3, replace = TRUE) %&gt;%     # pick an item at random three times
+  replicate(3, .)                   # repeat the above three times</code></pre>
+<pre><code>##      [,1]   [,2]   [,3]  
+## [1,] &quot;pear&quot; &quot;pear&quot; &quot;pear&quot;
+## [2,] &quot;pear&quot; &quot;pear&quot; &quot;pear&quot;
+## [3,] &quot;plum&quot; &quot;plum&quot; &quot;plum&quot;</code></pre>
+<p>OK but this is suspicious: all three of the outputs are the same.
+This tells me that the sampling isn’t being replicated:
+it’s being done once and the result is being replicated three times.</p>
+<p>Somehow the <code>.</code> in the replicate function needs to be the <em>function</em> above, not just its result.</p>
+<p>There’s an easy way to achieve this, by forgetting about old René and his pipe, and just putting the whole thing into a single… single… I don’t know, what do you call one of these things? A bracket nest? A turbracken?</p>
+<pre class="r"><code>replicate(3, sample(c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;), 3, replace = TRUE))  </code></pre>
+<pre><code>##      [,1]    [,2]    [,3]  
+## [1,] &quot;peach&quot; &quot;peach&quot; &quot;plum&quot;
+## [2,] &quot;pear&quot;  &quot;peach&quot; &quot;plum&quot;
+## [3,] &quot;peach&quot; &quot;peach&quot; &quot;plum&quot;</code></pre>
+<p>Job done.</p>
+<p><em>Except</em> that I think the option to pipe in a vector is useful, in theory at least, and I’d like to work out how to do that.
+There will be a way!</p>
+<p>I might also try to construct a generic function - weirdly it feels like that might be easier for using <code>tidyeval</code> than just the straight code??</p>
+<p>So, let’s try again.</p>
+<pre><code class='language-r'><code>c("peach", "pear", "plum") %>%<br>&nbsp;&nbsp;sample(3, replace = TRUE) %>%<br>&nbsp;&nbsp;replicate(3, <span style='background-color:plum1'>.</span>) # The <span style='background-color:plum1'>.</span> here means "expression"</code></code></pre>
+<p>My approach to making things work in <code>R</code> is unashamedly trial-and-error.
+I just keep on trying things to see what they do, and tweaking until I get what I want.
+It’s messy, and my R history gets very long, and littered with failed bits of code</p>
+<p>I get so <em>into</em> this process that I never stop and think, “let’s document this”, and by the time I get near to a solution it feels a little bit fake to go back and document how I got there.
+This situation is not very different, and it does feel like this write-up is a rather sanitised version of my actual process.</p>
+<p>But hopefully it will help me learn better.</p>
+<p>So my challenge now is successfully to pass the first two lines of the chunk above <em>as an expression</em> into the third line.</p>
+<p>First of all, I’ll just check that the pipe between lines 1 and 2 is all fine, and that those lines can form a cohesive and stable expression:</p>
+<pre class="r"><code>c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;%  # sample doesn&#39;t need a . 
+  sample(3, replace = TRUE)     # because x is the first argument</code></pre>
+<pre><code>## [1] &quot;peach&quot; &quot;pear&quot;  &quot;pear&quot;</code></pre>
+<pre class="r"><code># that should work the same as:
+sample(c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;), 3, replace = TRUE)</code></pre>
+<pre><code>## [1] &quot;peach&quot; &quot;plum&quot;  &quot;plum&quot;</code></pre>
+<p>OK, now I’m going to look up how to capture an expression.
+The place to go is of course the <a href="https://adv-r.hadley.nz/meta-big-picture.html">“Advanced R” book</a>, where we learn that:</p>
+<blockquote>
+<p>code is data: you can capture code and compute on as you can with any other type of data. The first way you can capture code is with <code>rlang::expr()</code>.</p>
+</blockquote>
+<p>So let’s try a blunt, naive approach to our problem:</p>
+<pre class="r"><code>c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;%
+  sample(3, replace = TRUE) %&gt;%
+  rlang::expr() %&gt;%
+  replicate(3, .)</code></pre>
+<pre><code>## [[1]]
+## .
+## 
+## [[2]]
+## .
+## 
+## [[3]]
+## .</code></pre>
+<p>That didn’t work - it clearly arrives in <code>expr()</code> as <code>.</code> so let’s take it apart a bit:</p>
+<pre class="r"><code>c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;%
+  sample(3, replace = TRUE) %&gt;%
+  rlang::expr()</code></pre>
+<pre><code>## .</code></pre>
+<p>It seems like you can’t pipe into <code>expr()</code> - the code has already been evaluated before it gets there rather than being captured in its prior state.
+What if we wrap <code>expr()</code> around the code, just to check?</p>
+<pre class="r"><code>rlang::expr(
+  c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;%
+  sample(3, replace = TRUE)
+)</code></pre>
+<pre><code>## c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;% sample(3, replace = TRUE)</code></pre>
+<p>OK great, that works.
+I’m getting worried that I will need to learn some super-complicated fine technical details of R code in order to work out a way of doing this (if there even is one)!
+Can we at least pipe this into <code>replicate()</code>?</p>
+<pre class="r"><code>rlang::expr(
+  c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;%
+  sample(3, replace = TRUE)
+) %&gt;% 
+  replicate(3, .)</code></pre>
+<pre><code>## [[1]]
+## c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;% sample(3, replace = TRUE)
+## 
+## [[2]]
+## c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;% sample(3, replace = TRUE)
+## 
+## [[3]]
+## c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;% sample(3, replace = TRUE)</code></pre>
+<p>Ha! D’oh!
+Of course we can, but of course <code>replicate</code> isn’t going to evaluate the expression unless we tell it to.
+It’ll just replicate the expression it’s given.
+<em>Advanced R</em> very simply and kindly <a href="https://adv-r.hadley.nz/evaluation.html">tells us</a> that all we need for evaluation is <code>eval()</code>, so let’s do that:</p>
+<pre class="r"><code>rlang::expr(
+  c(&quot;peach&quot;, &quot;pear&quot;, &quot;plum&quot;) %&gt;%
+  sample(3, replace = TRUE)
+) %&gt;% 
+  replicate(n = 3, expr = eval(.))</code></pre>
+<pre><code>##      [,1]    [,2]   [,3]   
+## [1,] &quot;plum&quot;  &quot;plum&quot; &quot;pear&quot; 
+## [2,] &quot;peach&quot; &quot;plum&quot; &quot;pear&quot; 
+## [3,] &quot;peach&quot; &quot;pear&quot; &quot;peach&quot;</code></pre>
+<p>Great!
+But I don’t think I am going to get round the issue of <code>expr()</code> not being pipeable-into.
+However, there might be another way of capturing those lines as an expression.
+I will keep reading.</p>
+<p>Compared to</p>
+<hr />
+<p><br /><br />
+<br /><br />
+<br /><br />
+<br /><br /></p>
+<hr />
+<p>PS Used Kelly Bodwin’s
+<a href="https://r-for-educators.github.io/flair/"><code>flair</code></a>
+for the first time on this post.
+Ended up filing a minor feature request as a
+<a href="https://github.com/r-for-educators/flair/issues/26">github issue</a>
+on the project.</p>

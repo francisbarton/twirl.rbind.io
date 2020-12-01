@@ -4,6 +4,7 @@ author: Francis Barton
 date: 
 description:
 slug:
+categories: posts
 tags:
   - learning
 output: hugodown::md_document()

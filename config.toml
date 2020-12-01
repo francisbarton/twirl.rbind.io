@@ -1,9 +1,9 @@
 baseurl = "https://twirl-rbind.netlify.app/"
 languageCode = "en-gb"
-title = "#twirl"
+title = "twirl"
 theme = "hyde-fork"
-# ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
-ignoreFiles = ['\.Rmd$', '_files$', '_cache$', '\.knit\.md$', '\.utf8\.md$']
+
+ignoreFiles = ["\\.Rmd$", "\\.knit\\.md$", "\\.utf8\\.md$", "_cache$"]
 
 [permalinks]
     post = "/:slug/"
@@ -13,42 +13,49 @@ ignoreFiles = ['\.Rmd$', '_files$', '_cache$', '\.knit\.md$', '\.utf8\.md$']
     alt = "twirl hex logo"
 
 
-# main menu Items
+# main menu
 [[menu.main]]
-    name = "Home"
+    name = "[home]"
     url = "/"
     weight = 1
 
 [[menu.main]]
-    name = "Posts"
+    name = "[posts]"
     url = "/posts"
     weight = 2
 
 [[menu.main]]
-    name = "About"
+    name = "[about]"
     url = "/about"
     weight = 3
 
-# social/contact menu
 
+
+
+# social/contact menu
 [[menu.contact]]
-    name = "GitHub"
+    name = "My GitHub"
     url = "https://github.com/francisbarton/"
     icon = "github"
     weight = 1
 
 [[menu.contact]]
-    name = "Twitter"
+    name = "My Twitter"
     url = "https://twitter.com/ludictech"
     icon = "twitter"
     weight = 2
 
+
+
+
+
 # General site parameters
 [params]
-    author = "Francis Barton"
-    subtitle = "Less-than-weekly learning notes"
-    description = "(This Week in R Learning)"
 
+    author = "Francis Barton"
+    subtitle = "Frankly less-than-weekly learning notes"
+    description = "(this week in R learning)"
+    
     disable_mathjax = true
     
     contactHeader = false
@@ -71,7 +78,7 @@ ignoreFiles = ['\.Rmd$', '_files$', '_cache$', '\.knit\.md$', '\.utf8\.md$']
     # Custom CSS added to default styles. Files added to `static` folder is copied as it is to
     # root by Hugo. For example if you have custom CSS file under `static/css/custom.css` then
     # you can specify custom css path as `css/custom.css`.
-    customCSS = ["css/hyde_tweaks.css"]
+    customCSS = ["css/hyde_tweaks.css"] # this weirdly needs to be in square brackets even when just a single item
     
     # Custom list of Javascript files to load. Just like custom CSS you can place js files under
     # `static/js` folder and specify path here as `js/script-name.js`. You can also specify full url,
@@ -103,6 +110,7 @@ ignoreFiles = ['\.Rmd$', '_files$', '_cache$', '\.knit\.md$', '\.utf8\.md$']
     width = 50
     height = 50
     alt = "twirl hex logo"
+
 
 # for hugodown
 # [markup]

@@ -3,10 +3,13 @@ title: My latest rabbithole
 date: '2020-10-03'
 slug: my-latest-rabbithole
 description: Some learning about R expressions and evaluation
+categories: posts
 tags:
   - learning
   - tidyeval
   - expressions
+  - flair
+  - rlang
 ---
 
 ```{r setup, echo = FALSE}

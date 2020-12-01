@@ -2,9 +2,10 @@
 title: Latest learnings
 author: Francis Barton
 date: '2020-04-06'
+slug: latest-learnings
+categories: posts
 tags:
   - stringr
-slug: latest-learnings
 ---
 
 ```{r setup, include = FALSE}

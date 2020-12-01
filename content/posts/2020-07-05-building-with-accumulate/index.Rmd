@@ -3,9 +3,13 @@ title: 'My latest problem: building a list with accumulate'
 author: Francis Barton
 date: '2020-07-05'
 slug: building-with-accumulate
+categories: posts
 tags:
   - purrr
   - learning
+  - recursion
+  - functions
+  - twirl
 ---
 
 ### Another R learning curve

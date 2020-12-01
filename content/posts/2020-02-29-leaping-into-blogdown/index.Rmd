@@ -3,6 +3,7 @@ title: Leaping into blogdown
 author: Francis Barton
 date: '2020-02-29'
 slug: leaping-into-blogdown
+categories: posts
 tags:
   - identical
   - learning
